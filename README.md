@@ -14,6 +14,3 @@ Bonus:
 - If you kill all the enemies, increase the level and change the color and speed of enemies
 - Be able to move up and down to a certain point in the screen
 - If an enemy collides with you, you lose
-
-Wireframe: 
-<img src='Game_Project/IMG_4031.jpg'>
