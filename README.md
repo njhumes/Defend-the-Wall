@@ -16,4 +16,4 @@ Bonus:
 - If an enemy collides with you, you lose
 
 Wireframe: 
-<img src='../IMG_4031.jpg'>
+<img src='IMG_4031.jpg'>
