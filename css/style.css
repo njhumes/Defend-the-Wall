@@ -1,0 +1,45 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    /* width: 100%; */
+}
+header {
+    position: relative;
+    left: 450px;
+    margin-bottom: 20px;
+}
+.start-button {
+    position: relative;
+    left: 90px;
+}
+#about img {
+    height: 100px;
+    width: 180px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#game-display {
+    border: 5px solid black;
+    height: 470px;
+}
+.game-square {
+    background: green;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    /* margin-bottom: 1px;
+    margin-right: 1px; */
+    font-size: 4px;
+    color: white;
+}
+.ship {
+    background: black;
+    /* background-image: url("../images/jonsnowtransparent.png"); */
+}
+.keyboard-controls {
+    text-align: center;
+}
+.laser {
+    background: red;
+}

@@ -14,3 +14,13 @@ Bonus:
 - If you kill all the enemies, increase the level and change the color and speed of enemies
 - Be able to move up and down to a certain point in the screen
 - If an enemy collides with you, you lose
+- Keep score/track high scores
+- Have enemies come in from the sides 
+- after kill all enemies, send out a wave of enemies and a final boss
+
+
+Theme Ideas:
+Game of Thrones - have Jon send out his wolf to white walkers
+nintendo/mario theme - mario shoots fireballs 
+Zelda: character - link fires arrows
+
