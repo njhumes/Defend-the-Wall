@@ -3,6 +3,9 @@ const game = {
     level: 1,
     score: 0,
     enemies: [],
+    time: setInterval(function(){
+        game.time++;
+    }, 500)
 }
 
 // Making game board
@@ -73,21 +76,17 @@ class Laser {
         this.y = y;
     }
     attack() {
-            this.x++; 
-            // this.y++;
-            $('.laser').removeClass('laser')
-            $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('laser');
-            console.log(`the laser is at ${this.x} ${this.y}`)
-            console.log(`the player is at ${player.x} ${player.y}`)
+        this.x++;
+        // $('.laser').removeClass('laser');
+        $(`.game-square[x="${this.x - 1}"][y="${this.y}"]`).removeClass('laser');
+        $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('laser');
+        // console.log(`the laser is at ${this.x} ${this.y}`)
+        // console.log(`the player is at ${player.x} ${player.y}`)
     }
 }
 
-let wolf = [];
-function timedAttack(){
-    wolf.attack();
-} 
-
-
+let wolf;
+let currentWolves = [];
 
 // Movement keybindings
 $('body').on('keydown', (e) => {
@@ -100,7 +99,23 @@ $('body').on('keydown', (e) => {
     } else if (e.which === 40) {
         player.moveDown();
     } else if (e.which === 32) {
-        wolf = new Laser(player.x, player.y);
-        setInterval(timedAttack, 1000);
+        wolf = new Laser(player.x, player.y); 
+        currentWolves.push(wolf);
+        timer;
+        // currentWolves.forEach(wolf.attack())
     }
 })
+
+let timer = setInterval(timedAttack, 100)
+function timedAttack() {
+    for(let i = 0; i < currentWolves.length; i++){
+        currentWolves[i].attack();
+    }
+}
+
+class Enemy {
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+    }
+}
