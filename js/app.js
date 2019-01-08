@@ -1,20 +1,38 @@
-console.log('test')
+let enemyTimer;
 const game = {
     level: 1,
     score: 0,
     lives: 3,
     time: setInterval(function(){
         game.time++;
-    }, 1000)
+    }, 1000),
+    active: true,
+    startGame(){
+        // enemyTimer = setInterval(createEnemy, 1000); it works
+        enemyTimer = setInterval(function(){
+            createEnemy();
+            game.gameOver();
+        }, 1000)
+    },
+    gameOver(){
+        if(game.lives < 0){
+            alert('Game Over');
+            $('#lives').text(`Game Over`)
+            $('header').append(`<button>Try Again</button>`);
+            clearInterval(enemyTimer);  
+        }
+    }
 }
+
+$('#start-button').click(game.startGame);
 
 // Making game board
 for (let y = 18; y > 0; y--) {
     const $row = $('<div/>').addClass('game-row');
     $('#game-display').append($row)
     for (let x = 1; x < 36; x++) {
-        // const $gameSquare = $(`<div>x: ${x}, y: ${y}</div>`).addClass('game-square').attr('x', x).attr('y', y);
-        const $gameSquare = $(`<div/>`).addClass('game-square').attr('x', x).attr('y', y);
+        const $gameSquare = $(`<div>x: ${x}, y: ${y}</div>`).addClass('game-square').attr('x', x).attr('y', y);
+        // const $gameSquare = $(`<div/>`).addClass('game-square').attr('x', x).attr('y', y);
         $('#game-display').append($gameSquare);
     }
 }
@@ -23,12 +41,13 @@ class Character {
     constructor() {
         this.x = 1;
         this.y = 9;
+        this.active = true;
     }
     render() {
         $('.ship').removeClass('ship');
         $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('ship');
-        console.log(`player x: ${this.x}`)
-        console.log(`player y: ${this.y}`)
+        // console.log(`player x: ${this.x}`)
+        // console.log(`player y: ${this.y}`)
     }
     moveLeft() {
         if (this.x < 6 && this.x > 1) {
@@ -70,35 +89,39 @@ window.addEventListener("keydown", function (e) {
 }, false);
 
 // Fire 
-class Laser {
+class Wolf {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.active = true;
     }
     attack() {
-        this.x++;
-        // $('.laser').removeClass('laser');
-        $(`.game-square[x="${this.x - 1}"][y="${this.y}"]`).removeClass('laser');
-        $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('laser');
-        // if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('enemy')) {
-        //     $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('laser');
-        //     $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('enemy');
-        //     console.log('collision');
-        // console.log(`the laser is at ${this.x} ${this.y}`)
-        // console.log(`the player is at ${player.x} ${player.y}`)
+        if(this.active){
+            this.x++;
+            $(`.game-square[x="${this.x - 1}"][y="${this.y}"]`).removeClass('wolf');
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('wolf');
+        }
     }
     collide() {
+        // this always make the game.squre kill htem
         if($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('enemy')){
-            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('laser');
+            this.active = false;
+            game.score++;
+            $('#score').text(`Score: ${game.score}`);
+            for(let m = 0; m < enemies.length; m++){
+                if(enemies[m].x == this.x && enemies[m].y == this.y){
+                    // currentWolves.splice(m, 1);
+                    enemies[m].active = false;
+                    // enemies.splice(m, 1);
+                }
+            }
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('wolf');
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('enemy');
-            console.log('collision');
+            console.log('wolf collision');
         }
     }
 }
-
-let wolf;
 let currentWolves = [];
-
 
 // Movement keybindings
 $('body').on('keydown', (e) => {
@@ -111,20 +134,18 @@ $('body').on('keydown', (e) => {
     } else if (e.which === 40) {
         player.moveDown();
     } else if (e.which === 32) {
-        wolf = new Laser(player.x, player.y); 
-        currentWolves.push(wolf);
-        timer;
-        wolf.collide();
-        // currentWolves.forEach(wolf.attack())
+        currentWolves.push(new Wolf(player.x, player.y));
     }
 })
 
-let timer = setInterval(timedAttack, 100)
+let attackTimer = setInterval(timedAttack, 100)
 function timedAttack() {
     for(let i = 0; i < currentWolves.length; i++){
         currentWolves[i].attack();
         currentWolves[i].collide();
-
+        if(currentWolves[i].active == false){
+            currentWolves.splice(i, 1);
+        }
     }
 }
 
@@ -132,33 +153,38 @@ class Enemy {
     constructor(x, y){
         this.x = x;
         this.y = y;
+        this.active = true;
     }
-    render() {
-        // $('.enemy').removeClass('enemy');
+    render(){
         $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('enemy');
     }
     advance() {
-        this.x--;
-        $(`.game-square[x="${this.x + 1}"][y="${this.y}"]`).removeClass('enemy');
-        $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('enemy');
+        if(this.active){
+            this.x--;
+            $(`.game-square[x="${this.x + 1}"][y="${this.y}"]`).removeClass('enemy');
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('enemy');
+        } else {
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('enemy');
+        }
+    }
+    loseLife() {
+        if(this.x === 1 && $(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('enemy')){
+            console.log('lost a life');
+            game.lives--;
+            $('#lives').text(`Lives: ${game.lives}`)
+        }
     }
 }
 
-let whiteWalker;
+
 let enemies = [];
-function createEnemy() {
-    whiteWalker = new Enemy(36, Math.floor(Math.random() * 18));
-    enemies.push(whiteWalker);
-}
-function enemiesAttack() {
-    // if(enemies.length < 10){
-    createEnemy();
-    for (let j = 0; j < enemies.length; j++) {
-        // enemies[j].render();
-         enemies[j].advance();
-         currentWolves[j].collide();
-    }
-// }
-}
-let enemyTimer = setInterval(enemiesAttack, 1000);  
+function createEnemy(){
+        enemies.push(new Enemy(36, Math.floor(Math.random() * 18)));
+        // enemies[enemies.length-1].render();
+        for (let j = 0; j < enemies.length; j++) {
+            // enemies[j].render()
+            enemies[j].advance();
+            enemies[j].loseLife();
+        }
+}    
 

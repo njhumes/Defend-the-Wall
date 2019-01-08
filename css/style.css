@@ -32,6 +32,8 @@ header {
     margin-right: 1px; */
     font-size: 4px;
     color: white;
+    margin-bottom: 0;
+    padding: 0;
 }
 .ship {
     background: black;
@@ -40,7 +42,7 @@ header {
 .keyboard-controls {
     text-align: center;
 }
-.laser {
+.wolf {
     background: red;
 }
 .enemy {
