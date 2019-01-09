@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Game Project</title>
+    <title>Defend the Wall Game Project</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- My CSS Sheet -->
     <link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
@@ -18,33 +18,34 @@
 <body>
     <header>
         <!-- Display title of Game and Start Button -->
-        <h1>Centipede Game</h1>
-        <!-- ^Change later^ -->
+        <h1>Defend the Wall</h1>
         <button id='start-button'>Start Game</button>
     </header>
     <div class="container">
-        <div class="row">
-            <div class="col-3"id='about'>
+        <div class='row'>
+            <div class="col" id='player-info'>
                 <h5>Instructions:</h5>
-                <p>Shoot all the enemies before they reach you! Be wary of the 'obstacles' that will get in your way.</br></br> Eliminate all opponents and you will be victorious!</p>
+                <p>Shoot all the enemies before they reach you! Be wary of the 'obstacles' that will get in your way. Eliminate
+                    all opponents and you will be victorious!</p>   
+                <h4 id='level'>Level: 1</h4>
+                <h4 id='score'>Score: 0</h4>
+                <h4 id='lives'>Lives: 3</h4>
+            </div>
+        </div>
+        <div class='row'>
+            <div class="col-10" id='game-display'>
+            </div>
+        </div>    
+        <div class="row">
+            <div class="col" id='about'>
+                
                 <h5>Controls:</h5>
                 <img src='images/arrows.jpg'>
                 <p class='keyboard-controls'>Player Movement</p>
-                <!-- <p>Left Arrow: Move Left</p>
-                <p>Right Arrow: Move Right</p>
-                <p>Up Arrow: Move Up</p>
-                <p>Down Arrow: Move Down</p> -->
                 <img src='images/spacebar.png'>
                 <p class='keyboard-controls'>Attack</p>
             </div>
-            <div class="col-6" id='game-display'>
-            </div>
-            <div class="col-2"id ='player-info'>
-                <h3 id='level'>Level: 1</h3>
-                <h3 id='score'>Score: 0</h3>
-                <h3 id='lives'>Lives: 3</h3>
-            </div>
-        </div>
+         </div>
     </div>
 
 <!-- My JavaScript -->

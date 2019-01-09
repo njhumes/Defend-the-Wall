@@ -1,3 +1,9 @@
+// To Do:
+// Use only one setInterval
+// Create level funcationality
+// final boss
+// CSS
+
 let enemyTimer;
 const game = {
     level: 1,
@@ -18,19 +24,24 @@ const game = {
         if(game.lives < 0){
             alert('Game Over');
             $('#lives').text(`Game Over`)
-            $('header').append(`<button>Try Again</button>`);
+            $('header').append(`<button id='restart'>Try Again</button>`);
             clearInterval(enemyTimer);  
         }
     }
 }
 
+// Start Button
 $('#start-button').click(game.startGame);
+// Restart Button
+$('header').on('click', '#restart', function(){
+    location.reload();
+})
 
 // Making game board
-for (let y = 18; y > 0; y--) {
+for (let y = 11; y > 0; y--) {
     const $row = $('<div/>').addClass('game-row');
     $('#game-display').append($row)
-    for (let x = 1; x < 36; x++) {
+    for (let x = 1; x < 27; x++) {
         const $gameSquare = $(`<div>x: ${x}, y: ${y}</div>`).addClass('game-square').attr('x', x).attr('y', y);
         // const $gameSquare = $(`<div/>`).addClass('game-square').attr('x', x).attr('y', y);
         $('#game-display').append($gameSquare);
@@ -40,10 +51,11 @@ for (let y = 18; y > 0; y--) {
 class Character {
     constructor() {
         this.x = 1;
-        this.y = 9;
+        this.y = 6;
         this.active = true;
     }
     render() {
+        // hard code 
         $('.ship').removeClass('ship');
         $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('ship');
         // console.log(`player x: ${this.x}`)
@@ -62,7 +74,7 @@ class Character {
         }
     }
     moveUp() {
-        if (this.y < 18 && this.y > 0){
+        if (this.y < 11 && this.y > 0){
             this.y++;
             this.render();
         }
@@ -150,7 +162,7 @@ function timedAttack() {
 }
 
 class Enemy {
-    constructor(x, y){
+    constructor(x, y,){
         this.x = x;
         this.y = y;
         this.active = true;
@@ -179,7 +191,7 @@ class Enemy {
 
 let enemies = [];
 function createEnemy(){
-        enemies.push(new Enemy(36, Math.floor(Math.random() * 18)));
+        enemies.push(new Enemy(27, Math.floor(Math.random() * 11)));
         // enemies[enemies.length-1].render();
         for (let j = 0; j < enemies.length; j++) {
             // enemies[j].render()
@@ -188,3 +200,40 @@ function createEnemy(){
         }
 }    
 
+class FinalBoss {
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+        this.active = true;
+    }
+    render() {
+        $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+    }
+    advance() {
+        if(this.active){
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('boss');
+            // Can move in any direction
+            if(this.x < 25 && (this.y > 1 && this.y < 11)){
+                this.x = this.x + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
+                this.y = this.y + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
+                $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+            }
+            // Can move anywhere but right
+            else if (this.x < 27 && (this.y > 1 && this.y < 11)){
+                this.x = this.x + (Math.round(Math.random()) * (-1));
+                this.y = this.y + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
+                $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+            }
+
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+        }
+
+
+    }
+}
+let nightKing = new FinalBoss(24, 5);
+
+// in my create enemy function
+// dont need another set interval
+// create finalboss if score > 50;
+// 
