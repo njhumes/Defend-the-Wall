@@ -18,6 +18,7 @@ const game = {
         enemyTimer = setInterval(function(){
             createEnemy();
             game.gameOver();
+            game.youWon();
         }, 1000)
     },
     gameOver(){
@@ -26,6 +27,12 @@ const game = {
             $('#lives').text(`Game Over`)
             $('header').append(`<button id='restart'>Try Again</button>`);
             clearInterval(enemyTimer);  
+        }
+    },
+    youWon(){
+        if(nightKing.health < 0){
+            alert('You won');
+            clearInterval(enemyTimer);
         }
     }
 }
@@ -134,6 +141,8 @@ class Wolf {
         if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('boss')) {
             this.active = false;
             nightKing.health--;
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('wolf');
+
         }
     }       
 }
@@ -204,10 +213,11 @@ function createEnemy(){
             enemies[j].loseLife();
         }
     } else {
-        nightKing.advance();
-        $('#score').text(`Final Boss Health: ${nightKing.health}`);
-    }
-        
+        if(nightKing.health >= 0){
+            nightKing.advance();
+            $('#score').text(`Final Boss Health: ${nightKing.health}`);
+        } 
+    }  
 }    
 
 let $boss;
@@ -223,34 +233,48 @@ class FinalBoss {
     }
     advance() {
         if(this.active){
+            console.log(nightKing);
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('boss');
             // Can move in any direction
             if(this.x < 25 && this.y > 2 && this.y < 10){
                 this.x = this.x + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
                 this.y = this.y + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
             }
-            // On the right edge, move left
+            // On the right edge
             else if (this.x == 26 || this.x == 25){
-                // On right and bottom edges
+                // on right and bottom edges
                 if(this.y == 1 || this.y == 2){
                     this.x--;
                     this.y++;
-                } else{
+                } else {
                     this.x--;
+                    this.y--;
+                    // this.y = this.y + (Math.round(Math.random()) * 2 - Math.round(Math.random()))
+                }
+            }
+            // On the bottom edge
+            else if (this.y == 1 || this.y == 2) {
+                // on bottom and right edges
+                if(this.x == 25 || this.x == 26){
+                    this.x --;
+                    this.y ++;
+                } else{
+                    this.x = this.x + (Math.round(Math.random()) * 2 - Math.round(Math.random()))
+                    this.y++;
+                }
+            }
+            // On the top edge
+            else if(this.y == 11 || this.y == 10){
+                // on top and right
+                if(this.x == 25 || this.x == 26){
+                    this.x--;
+                    this.y--;
+                } else {
+                    this.x = this.x + (Math.round(Math.random()) * 2 - Math.round(Math.random()))
                     this.y--;
                 }
             }
-            // On the bottom edge, move up
-            else if (this.y == 1 || this.y == 2) {
-                this.x++;             
-                this.y++;
-            }
-            // On the top edge, move down
-            else if(this.y == 11 || this.y == 10){
-                this.x--;               
-                this.y--;
-            }
-            // On the left edge, move right
+            // On the left edge
             else if (this.x == 1 || this.x == 2){
                 this.x++;
                 this.y++;
