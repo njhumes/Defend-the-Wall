@@ -131,7 +131,11 @@ class Wolf {
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('enemy');
             console.log('wolf collision');
         }
-    }
+        if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('boss')) {
+            this.active = false;
+            nightKing.health--;
+        }
+    }       
 }
 let currentWolves = [];
 
@@ -191,6 +195,7 @@ class Enemy {
 
 let enemies = [];
 function createEnemy(){
+    if(game.score < 10){
         enemies.push(new Enemy(27, Math.floor(Math.random() * 11)));
         // enemies[enemies.length-1].render();
         for (let j = 0; j < enemies.length; j++) {
@@ -198,13 +203,20 @@ function createEnemy(){
             enemies[j].advance();
             enemies[j].loseLife();
         }
+    } else {
+        nightKing.advance();
+        $('#score').text(`Final Boss Health: ${nightKing.health}`);
+    }
+        
 }    
 
+let $boss;
 class FinalBoss {
     constructor(x, y){
         this.x = x;
         this.y = y;
         this.active = true;
+        this.health = 10;
     }
     render() {
         $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
@@ -213,22 +225,38 @@ class FinalBoss {
         if(this.active){
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('boss');
             // Can move in any direction
-            if(this.x < 25 && (this.y > 1 && this.y < 11)){
+            if(this.x < 25 && this.y > 2 && this.y < 10){
                 this.x = this.x + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
                 this.y = this.y + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
-                $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
             }
-            // Can move anywhere but right
-            else if (this.x < 27 && (this.y > 1 && this.y < 11)){
-                this.x = this.x + (Math.round(Math.random()) * (-1));
-                this.y = this.y + (Math.round(Math.random()) * 2 - Math.round(Math.random()));
-                $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+            // On the right edge, move left
+            else if (this.x == 26 || this.x == 25){
+                // On right and bottom edges
+                if(this.y == 1 || this.y == 2){
+                    this.x--;
+                    this.y++;
+                } else{
+                    this.x--;
+                    this.y--;
+                }
             }
-
+            // On the bottom edge, move up
+            else if (this.y == 1 || this.y == 2) {
+                this.x++;             
+                this.y++;
+            }
+            // On the top edge, move down
+            else if(this.y == 11 || this.y == 10){
+                this.x--;               
+                this.y--;
+            }
+            // On the left edge, move right
+            else if (this.x == 1 || this.x == 2){
+                this.x++;
+                this.y++;
+            }
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
         }
-
-
     }
 }
 let nightKing = new FinalBoss(24, 5);
