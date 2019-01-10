@@ -19,13 +19,33 @@ const game = {
             createEnemy();
             game.gameOver();
             game.youWon();
-        }, 1000)
+        }, 750)
     },
     gameOver(){
         if(game.lives < 0){
-            alert('Game Over');
+            // alert('Game Over');
             $('#lives').text(`Game Over`)
-            $('header').append(`<button id='restart'>Try Again</button>`);
+            $('#start-button').hide();
+            for(let i = 0; i < enemies.length; i++){
+                // enemies[i].active = false;
+                $(`.game-square[x="${enemies[i].x}"][y="${enemies[i].y}"]`).removeClass('enemy');
+                $(`.game-square[x="${enemies[i].x}"][y="${enemies[i].y}"]`).removeClass('bones');
+
+            }
+            for(let f = 0; f < currentWolves.length; f++){
+                $(`.game-square[x="${currentWolves[f].x}"][y="${currentWolves[f].y}"]`).removeClass('wolf');
+            }
+            for(let k = 0; k < currentIces.length; k++){
+                $(`.game-square[x="${currentIces[k].x}"][y="${currentIces[k].y}"]`).removeClass('boss-attack');
+                }    
+            $('.col-10').css({
+                'background-image': 'url("../Game_Project/images/lost.gif")', 
+                // "background-position": "center",
+                // 'background-size': '100%',
+                "background-repeat": "no-repeat"
+            });
+            $('.col-2').prepend(`<button type="button" class="btn btn-dark" id='restart'>Try Again</button>`);
+            $(`.game-square[x="${player.x}"][y="${player.y}"]`).removeClass('ship')
             clearInterval(enemyTimer);  
         }
     },
@@ -33,6 +53,26 @@ const game = {
         if(nightKing.health < 0){
             alert('You won');
             clearInterval(enemyTimer);
+            $(`.game-square[x="${nightKing.x}"][y="${nightKing.y}"]`).removeClass('boss')
+            $('.col-10').css({
+                'background-image': 'url("../Game_Project/images/win2.png")', 
+                'background-position': 'center',
+                'background-repeat': 'no-repeat'
+                });
+            for (let i = 0; i < enemies.length; i++) {
+                // enemies[i].active = false;
+                $(`.game-square[x="${enemies[i].x}"][y="${enemies[i].y}"]`).removeClass('enemy');
+                $(`.game-square[x="${enemies[i].x}"][y="${enemies[i].y}"]`).removeClass('bones');
+
+            }
+            for (let j = 0; j < currentWolves.length; j++) {
+                $(`.game-square[x="${currentWolves[j].x}"][y="${currentWolves[j].y}"]`).removeClass('wolf');
+            }
+            for (let p = 0; p < currentIces.length; p++) {
+                $(`.game-square[x="${currentIces[p].x}"][y="${currentIces[p].y}"]`).removeClass('boss-attack');
+            }    
+            $('#start-button').hide();
+            $('.col-2').prepend(`<button type="button" class="btn btn-dark" id='restart'>Play Again</button>`);
         }
     }
 }
@@ -40,7 +80,7 @@ const game = {
 // Start Button
 $('#start-button').click(game.startGame);
 // Restart Button
-$('header').on('click', '#restart', function(){
+$('.col-2').on('click', '#restart', function(){
     location.reload();
 })
 
@@ -49,8 +89,8 @@ for (let y = 11; y > 0; y--) {
     const $row = $('<div/>').addClass('game-row');
     $('#game-display').append($row)
     for (let x = 1; x < 27; x++) {
-        const $gameSquare = $(`<div>x: ${x}, y: ${y}</div>`).addClass('game-square').attr('x', x).attr('y', y);
-        // const $gameSquare = $(`<div/>`).addClass('game-square').attr('x', x).attr('y', y);
+        // const $gameSquare = $(`<div>x: ${x}, y: ${y}</div>`).addClass('game-square').attr('x', x).attr('y', y);
+        const $gameSquare = $(`<div/>`).addClass('game-square').attr('x', x).attr('y', y);
         $('#game-display').append($gameSquare);
     }
 }
@@ -122,7 +162,6 @@ class Wolf {
         }
     }
     collide() {
-        // this always make the game.squre kill htem
         if($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('enemy')){
             this.active = false;
             game.score++;
@@ -144,6 +183,28 @@ class Wolf {
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('wolf');
 
         }
+        if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('boss-attack')) {
+            this.active = false;
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('boss-attack')
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('wolf')
+            for (let w = 0; w < currentIces.length; w++) {
+                if (currentIces[w].x == this.x && currentIces[w].y == this.y) {
+                    currentIces[w].active = false;
+                }
+            }
+        }
+        if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('bones')) {
+            this.active = false;
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('wolf')
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('bones')
+            for (let r = 0; r < enemies.length; r++) {
+                if (enemies[r].x == this.x && enemies[r].y == this.y) {
+                    // currentWolves.splice(m, 1);
+                    enemies[r].active = false;
+                    // enemies.splice(m, 1);
+                }
+            }
+        }
     }       
 }
 let currentWolves = [];
@@ -162,17 +223,6 @@ $('body').on('keydown', (e) => {
         currentWolves.push(new Wolf(player.x, player.y));
     }
 })
-
-let attackTimer = setInterval(timedAttack, 100)
-function timedAttack() {
-    for(let i = 0; i < currentWolves.length; i++){
-        currentWolves[i].attack();
-        currentWolves[i].collide();
-        if(currentWolves[i].active == false){
-            currentWolves.splice(i, 1);
-        }
-    }
-}
 
 class Enemy {
     constructor(x, y,){
@@ -199,6 +249,10 @@ class Enemy {
             $('#lives').text(`Lives: ${game.lives}`)
         }
     }
+    bones() {
+        $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('enemy');
+        $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('bones');
+    }
 }
 
 
@@ -206,16 +260,20 @@ let enemies = [];
 function createEnemy(){
     if(game.score < 10){
         enemies.push(new Enemy(27, Math.floor(Math.random() * 11)));
-        // enemies[enemies.length-1].render();
         for (let j = 0; j < enemies.length; j++) {
-            // enemies[j].render()
             enemies[j].advance();
             enemies[j].loseLife();
         }
     } else {
         if(nightKing.health >= 0){
+            for(let b = 0; b < enemies.length; b++){
+                if(enemies[b].active){
+                    enemies[b].bones();
+                }
+            }
             nightKing.advance();
-            $('#score').text(`Final Boss Health: ${nightKing.health}`);
+            $('#score').text(`Night King Health: ${nightKing.health}`);
+            createIce();
         } 
     }  
 }    
@@ -281,11 +339,48 @@ class FinalBoss {
             }
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
         }
+    } 
+}
+class BossAttack {
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+        this.active = true;
     }
+    attack(){
+        console.log('nightking attacks');
+        if(this.active){
+            this.x--;
+            $(`.game-square[x="${this.x + 1}"][y="${this.y}"]`).removeClass('boss-attack');
+            $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss-attack');
+            if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('ship')){
+                this.active = false;
+                $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('boss-attack');
+                game.lives--;
+                $('#lives').text(`Lives: ${game.lives}`)
+            }
+        }
+    }
+
+
 }
 let nightKing = new FinalBoss(24, 5);
-
-// in my create enemy function
-// dont need another set interval
-// create finalboss if score > 50;
-// 
+let currentIces = [];
+function createIce() {
+    currentIces.push(new BossAttack(nightKing.x, nightKing.y - 1))
+    for(let k = 0; k < currentIces.length; k++){
+        currentIces[k].attack();
+    }
+}  
+let attackTimer = setInterval(timedAttack, 150)
+function timedAttack() {
+    for (let i = 0; i < currentWolves.length; i++) {
+        currentWolves[i].attack();
+        currentWolves[i].collide();
+        if (currentWolves[i].active == false) {
+            currentWolves.splice(i, 1);
+        }
+    }
+    // createIce();
+    // ice.attack();
+}

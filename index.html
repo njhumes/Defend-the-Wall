@@ -14,36 +14,50 @@
         crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
+        <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Cinzel" rel="stylesheet">
 </head>
 <body>
     <header>
         <!-- Display title of Game and Start Button -->
-        <h1>Defend the Wall</h1>
-        <button id='start-button'>Start Game</button>
+        <img id='title' src="https://fontmeme.com/permalink/190110/8c3a08627793cc77fe6db72795b767cc.png"
+                alt="game-of-thrones-font" border="0">
+        <!-- <h1>Defend the Wall</h1> -->
+        <!-- <button id='start-button'>Start Game</button> -->
     </header>
     <div class="container">
         <div class='row'>
             <div class="col" id='player-info'>
-                <h5>Instructions:</h5>
-                <p>Shoot all the enemies before they reach you! Be wary of the 'obstacles' that will get in your way. Eliminate
-                    all opponents and you will be victorious!</p>   
-                <h4 id='level'>Level: 1</h4>
-                <h4 id='score'>Score: 0</h4>
-                <h4 id='lives'>Lives: 3</h4>
+                <!-- <h5>Instructions:</h5> -->
+                <img src="https://fontmeme.com/permalink/190110/d7e588276ddaa7d25726bd39d572aed4.png"
+                        alt="game-of-thrones-font" border="0">
+                <p>Help Jon Snow defend the wall against the White Walkers! Elimante enough of them and face the Night King!
+                </p>   
             </div>
         </div>
         <div class='row'>
             <div class="col-10" id='game-display'>
             </div>
+            <div class='col-2'>
+                <!-- <button id='start-button'>Start Game</button> -->
+                <button type="button" class="btn btn-dark" id='start-button'>Start Game</button>
+                <h4 id='score'>Score: 0</h4>
+                <h4 id='lives'>Lives: 3</h4>
+            </div>
         </div>    
         <div class="row">
             <div class="col" id='about'>
-                
-                <h5>Controls:</h5>
-                <img src='images/arrows.jpg'>
-                <p class='keyboard-controls'>Player Movement</p>
-                <img src='images/spacebar.png'>
-                <p class='keyboard-controls'>Attack</p>
+                <img src="https://fontmeme.com/permalink/190110/fa928e696f58565da9c81f3db4614891.png"
+                            alt="game-of-thrones-font" border="0">
+                <div>
+                    <img class='keyboard-image' src='images/arrows.jpg'>
+                    <p class='keyboard-controls'>Player Movement</p>
+                </div>
+                <div>
+                    <img class='keyboard-image' src='images/spacebar.png'>
+                    <p class='keyboard-controls'>Attack</p>
+                </div>
+               
             </div>
          </div>
     </div>
