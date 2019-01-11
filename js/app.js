@@ -1,9 +1,3 @@
-// To Do:
-// Use only one setInterval
-// Create level funcationality
-// final boss
-// CSS
-
 let enemyTimer;
 const game = {
     level: 1,
@@ -23,7 +17,7 @@ const game = {
     },
     gameOver(){
         if(game.lives < 0){
-            // alert('Game Over');
+            alert('Game Over. You let the Night King and his army of White Walkers through the wall and failed to protect the realm');
             $('#lives').text(`Game Over`)
             $('#start-button').hide();
             for(let i = 0; i < enemies.length; i++){
@@ -44,6 +38,7 @@ const game = {
                 // 'background-size': '100%',
                 "background-repeat": "no-repeat"
             });
+            $(`.game-square[x="${nightKing.x}"][y="${nightKing.y}"]`).removeClass('boss');
             $('.col-2').prepend(`<button type="button" class="btn btn-dark" id='restart'>Try Again</button>`);
             $(`.game-square[x="${player.x}"][y="${player.y}"]`).removeClass('ship')
             clearInterval(enemyTimer);  
@@ -51,7 +46,7 @@ const game = {
     },
     youWon(){
         if(nightKing.health < 0){
-            alert('You won');
+            alert('You defeated the Night King and his army of White Walkers!');
             clearInterval(enemyTimer);
             $(`.game-square[x="${nightKing.x}"][y="${nightKing.y}"]`).removeClass('boss')
             $('.col-10').css({
@@ -102,11 +97,8 @@ class Character {
         this.active = true;
     }
     render() {
-        // hard code 
         $('.ship').removeClass('ship');
         $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('ship');
-        // console.log(`player x: ${this.x}`)
-        // console.log(`player y: ${this.y}`)
     }
     moveLeft() {
         if (this.x < 6 && this.x > 1) {
@@ -134,10 +126,9 @@ class Character {
     }
 }
 
+// Creating and rendering Player
 const player = new Character();
 player.render();
-console.log(player.x)
-
 
 // Prevent Scrolling w Arrow keys
 window.addEventListener("keydown", function (e) {
@@ -147,7 +138,7 @@ window.addEventListener("keydown", function (e) {
     }
 }, false);
 
-// Fire 
+// Player Attack Class
 class Wolf {
     constructor(x, y) {
         this.x = x;
@@ -168,9 +159,7 @@ class Wolf {
             $('#score').text(`Score: ${game.score}`);
             for(let m = 0; m < enemies.length; m++){
                 if(enemies[m].x == this.x && enemies[m].y == this.y){
-                    // currentWolves.splice(m, 1);
                     enemies[m].active = false;
-                    // enemies.splice(m, 1);
                 }
             }
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('wolf');
@@ -199,9 +188,7 @@ class Wolf {
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('bones')
             for (let r = 0; r < enemies.length; r++) {
                 if (enemies[r].x == this.x && enemies[r].y == this.y) {
-                    // currentWolves.splice(m, 1);
                     enemies[r].active = false;
-                    // enemies.splice(m, 1);
                 }
             }
         }
@@ -230,9 +217,9 @@ class Enemy {
         this.y = y;
         this.active = true;
     }
-    render(){
-        $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('enemy');
-    }
+    // render(){
+    //     $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('enemy');
+    // }
     advance() {
         if(this.active){
             this.x--;
@@ -278,7 +265,6 @@ function createEnemy(){
     }  
 }    
 
-let $boss;
 class FinalBoss {
     constructor(x, y){
         this.x = x;
@@ -286,9 +272,9 @@ class FinalBoss {
         this.active = true;
         this.health = 10;
     }
-    render() {
-        $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
-    }
+    // render() {
+    //     $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+    // }
     advance() {
         if(this.active){
             console.log(nightKing);
@@ -364,15 +350,18 @@ class BossAttack {
 
 
 }
+// Instatiating Boss
 let nightKing = new FinalBoss(24, 5);
 let currentIces = [];
+
+// Final Boss Attacking Function
 function createIce() {
     currentIces.push(new BossAttack(nightKing.x, nightKing.y - 1))
     for(let k = 0; k < currentIces.length; k++){
         currentIces[k].attack();
     }
 }  
-let attackTimer = setInterval(timedAttack, 150)
+let attackTimer = setInterval(timedAttack, 100)
 function timedAttack() {
     for (let i = 0; i < currentWolves.length; i++) {
         currentWolves[i].attack();
@@ -381,6 +370,4 @@ function timedAttack() {
             currentWolves.splice(i, 1);
         }
     }
-    // createIce();
-    // ice.attack();
 }
