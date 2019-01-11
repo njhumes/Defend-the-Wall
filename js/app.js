@@ -5,7 +5,7 @@ const game = {
     lives: 3,
     time: setInterval(function(){
         game.time++;
-    }, 1000),
+    }, 500),
     active: true,
     startGame(){
         // enemyTimer = setInterval(createEnemy, 1000); it works
@@ -13,7 +13,7 @@ const game = {
             createEnemy();
             game.gameOver();
             game.youWon();
-        }, 750)
+        }, 700)
     },
     gameOver(){
         if(game.lives < 0){
@@ -230,10 +230,17 @@ class Enemy {
         }
     }
     loseLife() {
-        if(this.x === 1 && $(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('enemy')){
-            console.log('lost a life');
-            game.lives--;
-            $('#lives').text(`Lives: ${game.lives}`)
+        if(this.active){
+            if(this.x === 1 && $(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('enemy')){
+                console.log('lost a life');
+                game.lives--;
+                $('#lives').text(`Lives: ${game.lives}`)
+            }
+            if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('ship')){
+                game.lives--;
+                this.active = false;
+                $('#lives').text(`Lives: ${game.lives}`)
+            }
         }
     }
     bones() {
@@ -242,7 +249,7 @@ class Enemy {
     }
 }
 
-
+// Creating Enemeies
 let enemies = [];
 function createEnemy(){
     if(game.score < 10){
@@ -258,7 +265,10 @@ function createEnemy(){
                     enemies[b].bones();
                 }
             }
-            nightKing.advance();
+            // if(game.time % 2 == 0){
+                nightKing.advance();
+            // }
+
             $('#score').text(`Night King Health: ${nightKing.health}`);
             createIce();
         } 
@@ -272,9 +282,6 @@ class FinalBoss {
         this.active = true;
         this.health = 10;
     }
-    // render() {
-    //     $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
-    // }
     advance() {
         if(this.active){
             console.log(nightKing);
@@ -293,7 +300,6 @@ class FinalBoss {
                 } else {
                     this.x--;
                     this.y--;
-                    // this.y = this.y + (Math.round(Math.random()) * 2 - Math.round(Math.random()))
                 }
             }
             // On the bottom edge
@@ -324,6 +330,10 @@ class FinalBoss {
                 this.y++;
             }
             $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+            if ($(`.game-square[x="${this.x}"][y="${this.y}"]`).hasClass('bones')){
+                $(`.game-square[x="${this.x}"][y="${this.y}"]`).removeClass('bones');
+                $(`.game-square[x="${this.x}"][y="${this.y}"]`).addClass('boss');
+            }
         }
     } 
 }
@@ -347,8 +357,6 @@ class BossAttack {
             }
         }
     }
-
-
 }
 // Instatiating Boss
 let nightKing = new FinalBoss(24, 5);
@@ -356,11 +364,11 @@ let currentIces = [];
 
 // Final Boss Attacking Function
 function createIce() {
-    currentIces.push(new BossAttack(nightKing.x, nightKing.y - 1))
-    for(let k = 0; k < currentIces.length; k++){
-        currentIces[k].attack();
-    }
-}  
+        currentIces.push(new BossAttack(nightKing.x, nightKing.y - 1))
+        for (let k = 0; k < currentIces.length; k++) {
+            currentIces[k].attack();
+        }
+    } 
 let attackTimer = setInterval(timedAttack, 100)
 function timedAttack() {
     for (let i = 0; i < currentWolves.length; i++) {
