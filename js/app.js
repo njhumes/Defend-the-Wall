@@ -50,7 +50,7 @@ const game = {
             clearInterval(enemyTimer);
             $(`.game-square[x="${nightKing.x}"][y="${nightKing.y}"]`).removeClass('boss')
             $('.col-10').css({
-                'background-image': 'url("../Game_Project/images/win2.png")', 
+                'background-image': 'url("../Game_Project/images/win.gif")', 
                 'background-position': 'center',
                 'background-repeat': 'no-repeat'
                 });
